@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Distributed Trade Engine — Python portfolio project by Umair Aslam." />
+  <title>Distributed Trade Engine | Umair Aslam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav container"><a class="brand" href="../../">UA</a><div class="nav-links"><a href="../../">Résumé</a><a href="https://github.com/umairaslam-dev/umairaslam-dev.github.io/tree/main/projects/distributed-trade-engine" target="_blank">Source</a></div></nav>
+    <main class="container hero-content">
+      <p class="eyebrow">Distributed Systems • Python • Financial Engineering</p>
+      <h1>Distributed Trade Engine</h1>
+      <p class="hero-copy">A clean-room Python implementation of the difficult parts of high-throughput trade processing: duplicate delivery, bounded concurrency, retries, dead-letter handling, explicit state transitions, and authoritative reconciliation.</p>
+      <div class="hero-actions"><a class="button primary" href="https://github.com/umairaslam-dev/umairaslam-dev.github.io/tree/main/projects/distributed-trade-engine" target="_blank">View Source Code</a><a class="button secondary" href="../../">Back to Résumé</a></div>
+      <div class="hero-tags"><span>Python 3.11+</span><span>asyncio</span><span>Idempotency</span><span>Backpressure</span><span>Retries / DLQ</span><span>Reconciliation</span></div>
+    </main>
+  </header>
+
+  <section class="section container"><div class="section-heading"><p class="eyebrow">The Problem</p><h2>Correctness is harder than consuming messages</h2><p>Real event-processing systems must assume duplicates, transient failures, traffic spikes, partial outages, and drift between streaming state and an authoritative source. The engine models those failure modes directly.</p></div><div class="grid impact-grid">
+    <article class="card"><div class="card-number">01</div><h3>Idempotent Processing</h3><p>Immutable event IDs prevent duplicate delivery from reapplying business side effects.</p></article>
+    <article class="card"><div class="card-number">02</div><h3>Bounded Concurrency</h3><p>An asyncio semaphore caps in-flight work so traffic spikes cannot create unlimited pressure on downstream dependencies.</p></article>
+    <article class="card"><div class="card-number">03</div><h3>Retries + DLQ</h3><p>Transient failures use exponential backoff; exhausted events move to an explicit dead-letter queue for investigation or replay.</p></article>
+    <article class="card"><div class="card-number">04</div><h3>Reconciliation</h3><p>A separate comparison engine detects missing, stale, and unexpected trades against an authoritative snapshot.</p></article>
+  </div></section>
+
+  <section class="section muted"><div class="container"><div class="section-heading"><p class="eyebrow">Architecture</p><h2>Streaming fast, reconciling for correctness</h2></div><div class="card"><pre style="white-space:pre-wrap;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.8;">Producer → Event Queue / Kafka → Async Consumer → Idempotency Check
+                                      ↓
+                           Validate → Enrich → Settle
+                                      ↓
+                               Trade Store
+                              ↙          ↘
+                          Metrics      Audit
+
+Authoritative Snapshot → Reconciliation Engine → Missing / Stale / Unexpected</pre></div></div></section>
+
+  <section class="section container"><div class="section-heading"><p class="eyebrow">Engineering Decisions</p><h2>Built for interview-level discussion</h2></div><div class="grid skills-grid"><article class="skill-card"><h3>At-least-once delivery</h3><p>The design does not pretend infrastructure gives free exactly-once semantics. Idempotency is handled at the application boundary.</p></article><article class="skill-card"><h3>Explicit state machine</h3><p>Trades move through RECEIVED → VALIDATED → ENRICHED → SETTLED, with invalid transitions rejected.</p></article><article class="skill-card"><h3>Production path</h3><p>The README documents how this evolves to Kafka, PostgreSQL inbox/outbox, OpenTelemetry, schema versioning, Kubernetes and load testing.</p></article></div></section>
+
+  <footer><div class="container footer-inner"><span>© 2026 Umair Aslam</span><span>Clean-room portfolio project</span></div></footer>
+</body>
+</html>
